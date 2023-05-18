@@ -40,7 +40,7 @@ public class OnlineController {
 		
 		int listCount = onService.selectListCount();
 		
-		PageInfo pi = Pagination.getPageInfo(listCount, currentPage, 10, 6);
+		PageInfo pi = Pagination.getPageInfo(listCount, currentPage, 10, 10);
 		
 		ArrayList<OnlineGroupOnce> list = onService.selectListOn(pi, tableNo);
 		
@@ -92,87 +92,103 @@ public class OnlineController {
 	            String filePath = "resources/uploadFiles/" + savedFileNames.get(i);
 	            String changeName = savedFileNames.get(i);
 	            
-	            GroupUpload gtoupUpload = new GroupUpload();
-	            gtoupUpload.setOriginName(originName != null ? originName : "");
-	            gtoupUpload.setChangeName(changeName);
-	            if (i == 0) {
-	            	gtoupUpload.setFileLevel(1); // 첫 번째 파일은 대표 이미지
-	            } else {
-	            	gtoupUpload.setFileLevel(2); // 나머지 파일은 추가 이미지
-	            }
-	            gtoupUpload.setFilePath(filePath);
-	            gtoupUpload.setTableNo(2);
+	            GroupUpload groupUpload = new GroupUpload();
+	            groupUpload.setOriginName(originName != null ? originName : "");
+	            groupUpload.setChangeName(changeName);
 	            
-	            uploads.add(gtoupUpload);
+	            if (i == 0) {
+	            	groupUpload.setFileLevel(1); // 첫 번째 파일은 대표 이미지
+	            	ong.setThumbnail(filePath);
+	            } else {
+	            	groupUpload.setFileLevel(2); // 나머지 파일은 추가 이미지
+	            }
+	            groupUpload.setFilePath(filePath);
+	            groupUpload.setTableNo(2);
+	            
+	            uploads.add(groupUpload);
 	        }
 	        
 	        gu.setUploads(uploads); // 업로드한 파일 리스트를 Upload 객체에 설정
 	    }
 
-	    int result = onService.insertOfflineGroupOne(ong, gu);
-	    
-	    if (result > 0) { // 성공 => 게시글 리스트 페이지 url 재요청 ("list.bo")
-	        session.setAttribute("alertMsg", "성공적으로 등록되었습니다.");
-	        return "redirect:onList.go?tableNo=2";
-	    } else { // 실패 => 에러페이지 포워딩
-	        model.addAttribute("errorMsg", "게시글 등록 실패!");
-	        return "common/errorPage";
-	    }
-	}
-	
-//	// 상세조회
-//	@RequestMapping("detail.go")
-//	public ModelAndView selectDetail(int no, Model model, ModelAndView mv) {
-//		int result = onService.increaseCount(no);
-//		List<GroupUpload> list = onService.selectAttachmentList(no);
-//		
-//		if(result > 0) {
-//			OnlineGroupOnce ogo = onService.selectDetail(no);
-//			mv.addObject("ogo", ogo).setViewName("offline/detailView");
-//			mv.addObject("list", list).setViewName("offline/detailView");
-//			
-//		}else {
-//			mv.addObject("errorMsg", "게시글 상세 조회 실패!").setViewName("common/errorPage");
-//		}
-//		
-//		return mv;
-//		
-//	}
-	
-	
-	// 현재 넘어온 첨부파일 그 자체를 서버의 폴더에 저장시키는 역할
-	public List<String> saveFiles(List<MultipartFile> upfiles, HttpSession session) {
-	    List<String> savedFileNames = new ArrayList();
+       int result = onService.insertOfflineGroupOne(ong, gu);
+       
+       if (result > 0) { // 성공 => 게시글 리스트 페이지 url 재요청 ("list.bo")
+           session.setAttribute("alertMsg", "성공적으로 등록되었습니다.");
+           return "redirect:onList.go?tableNo=2";
+       } else { // 실패 => 에러페이지 포워딩
+           model.addAttribute("errorMsg", "게시글 등록 실패!");
+           return "common/errorPage";
+       }
+   }
+   
+   // 상세조회
+   @RequestMapping("detail.go")
+   public ModelAndView selectDetail(int tableNo, int no, Model model, ModelAndView mv) {
+      int result = onService.increaseCount(tableNo, no);
+      List<GroupUpload> list = onService.selectAttachmentList(tableNo, no);
+      
+      if(result > 0) {
+         OnlineGroupOnce ogo = onService.selectDetail(tableNo, no);
+         mv.addObject("ogo", ogo).setViewName("offline/detailView");
+         mv.addObject("list", list).setViewName("offline/detailView");
+         
+      }else {
+         mv.addObject("errorMsg", "게시글 상세 조회 실패!").setViewName("common/errorPage");
+      }
+      
+      return mv;
+      
+   }
+   
+   // 참가하기
+   @RequestMapping("entry.go")
+   public ModelAndView entryGroup(String memName, int memNo, int tableNo, int groupNo, ModelAndView mv) {
+	   int result = onService.entryGroup(memName, memNo, tableNo, groupNo);
+	   
+	   if(result > 0) {
+		   ArrayList<OnlineGroupOnce> list = onService.selectEntryList(tableNo, groupNo);
+		   mv.addObject("enlist", list).setViewName("offline/detailView");
+	   }else {
+		   mv.addObject("errorMsg", "참가실패!").setViewName("common/errorPage");
+	   }
+	   return mv;
+   }
+   
+   
+   // 현재 넘어온 첨부파일 그 자체를 서버의 폴더에 저장시키는 역할
+   public List<String> saveFiles(List<MultipartFile> upfiles, HttpSession session) {
+       List<String> savedFileNames = new ArrayList();
 
-	    for (MultipartFile upfile : upfiles) {
-	        if (!upfile.getOriginalFilename().isEmpty()) {
-	            String originName = upfile.getOriginalFilename();
-	            String currentTime = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
-	            int ranNum = (int) (Math.random() * 90000 + 10000);
-	            String ext;
-	            int dotIndex = originName.lastIndexOf(".");
-	            if (dotIndex != -1) {
-	                ext = originName.substring(dotIndex);
-	            } else {
-	                ext = "";
-	            }
-	            String changeName = currentTime + ranNum + ext;
-	            String savePath = session.getServletContext().getRealPath("/resources/uploadFiles/");
+       for (MultipartFile upfile : upfiles) {
+           if (!upfile.getOriginalFilename().isEmpty()) {
+               String originName = upfile.getOriginalFilename();
+               String currentTime = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
+               int ranNum = (int) (Math.random() * 90000 + 10000);
+               String ext;
+               int dotIndex = originName.lastIndexOf(".");
+               if (dotIndex != -1) {
+                   ext = originName.substring(dotIndex);
+               } else {
+                   ext = "";
+               }
+               String changeName = currentTime + ranNum + ext;
+               String savePath = session.getServletContext().getRealPath("/resources/uploadFiles/");
 
-	            try {
-	                upfile.transferTo(new File(savePath + changeName));
-	                savedFileNames.add(changeName);
-	            } catch (IllegalStateException e) {
-	                e.printStackTrace();
-	            } catch (IOException e) {
-	                e.printStackTrace();
-	            }
-	        } else {
-	            savedFileNames.add(""); // 파일이 없을 경우 빈 문자열 추가
-	        }
-	    }
+               try {
+                   upfile.transferTo(new File(savePath + changeName));
+                   savedFileNames.add(changeName);
+               } catch (IllegalStateException e) {
+                   e.printStackTrace();
+               } catch (IOException e) {
+                   e.printStackTrace();
+               }
+           } else {
+               savedFileNames.add(""); // 파일이 없을 경우 빈 문자열 추가
+           }
+       }
 
-	    return savedFileNames;
-	}
-
+       return savedFileNames;
+   }
 }
+

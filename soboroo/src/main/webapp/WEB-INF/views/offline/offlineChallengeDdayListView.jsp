@@ -6,7 +6,7 @@
 <head>
 	<meta charset="UTF-8">
 	<title>soboroo | 오프라인 D-DAY</title>
-	
+
 	<!-- Favicon
 	================================================== -->
   	<link rel="icon" type="image/x-icon" href="${pageContext.request.contextPath}/resources/images/favicon.png">

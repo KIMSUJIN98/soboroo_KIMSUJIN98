@@ -6,11 +6,11 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-@NoArgsConstructor		// 기본생성자
-@AllArgsConstructor		// 전체 매개변수 생성자
-@Setter					// setter 메소드
-@Getter					// getter 메소드
-@ToString				// toString 메소드
+@NoArgsConstructor      // 기본생성자
+@AllArgsConstructor      // 전체 매개변수 생성자
+@Setter               // setter 메소드
+@Getter               // getter 메소드
+@ToString            // toString 메소드
 public class OnlineGroupOnce {
 
 	private int no;
@@ -44,6 +44,7 @@ public class OnlineGroupOnce {
 	private String attendPassword;
 	private int count;
 	private String status;
+	private String thumbnail;
 	
 	private String categoryTitle;
 	private String filePath;
