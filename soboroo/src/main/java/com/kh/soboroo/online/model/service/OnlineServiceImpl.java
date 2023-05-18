@@ -56,6 +56,14 @@ public class OnlineServiceImpl {
    public OnlineGroupOnce selectDetail(int tableNo, int no) {
       return onDao.selectDetail(sqlSession, tableNo, no);
    }
+   
+   public int entryGroup(String memName, int memNo, int tableNo, int groupNo) {
+	  return onDao.entryGroup(sqlSession, memName, memNo, tableNo, groupNo);
+   }
+   
+   public ArrayList<OnlineGroupOnce> selectEntryList(int tableNo, int groupNo) {
+	  return onDao.selectEntryList(sqlSession, tableNo, groupNo);
+   }
 
    public List<GroupUpload> selectAttachmentList(int tableNo, int no) {
       return onDao.selectAttachmentList(sqlSession, tableNo, no);

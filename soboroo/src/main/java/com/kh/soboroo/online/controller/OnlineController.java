@@ -141,6 +141,20 @@ public class OnlineController {
       
    }
    
+   // 참가하기
+   @RequestMapping("entry.go")
+   public ModelAndView entryGroup(String memName, int memNo, int tableNo, int groupNo, ModelAndView mv) {
+	   int result = onService.entryGroup(memName, memNo, tableNo, groupNo);
+	   
+	   if(result > 0) {
+		   ArrayList<OnlineGroupOnce> list = onService.selectEntryList(tableNo, groupNo);
+		   mv.addObject("enlist", list).setViewName("offline/detailView");
+	   }else {
+		   mv.addObject("errorMsg", "참가실패!").setViewName("common/errorPage");
+	   }
+	   return mv;
+   }
+   
    
    // 현재 넘어온 첨부파일 그 자체를 서버의 폴더에 저장시키는 역할
    public List<String> saveFiles(List<MultipartFile> upfiles, HttpSession session) {

@@ -99,28 +99,39 @@
 						<th width="300px">닉네임</th>
 						<th>참가시간</th>
 					</tr>
+			
+					<!-- 
+					<c:forEach var="e" items="${ enlist }">
+						<c:set var="i" value="${ i+1 }"/>
+	                		<tr>
+								<td>${ i }</td>
+								<td>${ e.memName }</td>
+							</tr>
+              		</c:forEach>
+					 -->
+					 
 					<tr>
 						<td>1</td>
-						<td>[사진] 감스트이꼴황대인</td>
-						<td>2023-05-01 14:31:23</td>
+						<td>손흥민</td>
+						<td>2023-05-17 14:31:23</td>
 					</tr>
 					<tr>
 						<td>2</td>
-						<td>[사진] 돌종국드뎌각성</td>
-						<td>2023-05-01 17:25:54</td>
+						<td>이강인</td>
+						<td>2023-05-17 17:25:54</td>
 					</tr>
 					<tr>
-						<td>2</td>
-						<td>[사진] 돌종국드뎌각성</td>
-						<td>2023-05-01 17:25:54</td>
+						<td>3</td>
+						<td>이승우</td>
+						<td>2023-05-18 17:25:54</td>
 					</tr>
 					<tr>
-						<td>2</td>
-						<td>[사진] 돌종국드뎌각성</td>
-						<td>2023-05-01 17:25:54</td>
+						<td>4</td>
+						<td>${ ogo.name }</td>
+						<td>2023-05-19 09:02:21</td>
 					</tr>
 					<tr>
-						<td colspan="3">29명/30명</td>
+						<td colspan="3">4명</td>
 					</tr>
 				</tbody>
 			</table>
@@ -147,7 +158,7 @@
 	              </li>
 	              <li>
 	                <p class="project-info-label">모임장소</p>
-	                <p class="project-info-content">${ ogo.address } ${ ogo.addressDetail }&nbsp;&nbsp;&nbsp;<a href="#" class="btn btn-primary btn-xs" data-toggle="modal" data-target="#mapModal">지도보기</a>
+	                <p class="project-info-content">${ ogo.address } ${ ogo.addressDetail }&nbsp;&nbsp;&nbsp;<!-- <a href="#" class="btn btn-primary btn-xs" data-toggle="modal" data-target="#mapModal">지도보기</a> -->
 	              </li>
 	              <li>
 	                <p class="project-info-label">그룹장</p>
@@ -165,7 +176,7 @@
 	              <hr>
 	              <li>
 	                <p class="project-link">
-	                  <a class="btn btn-primary" target="_blank" href="#" id="entryButton">모임에 참가하기</a> 	<!-- join.me / 클릭시, 참가취소 로 변경되게끔! 인원수가 찬 경우, 대기하기로 출력하기 -->
+	                  <a class="btn btn-primary" href="#" id="entryButton">모임에 참가하기</a> 	<!-- join.me / 클릭시, 참가취소 로 변경되게끔! 인원수가 찬 경우, 대기하기로 출력하기 -->
 	                  <!-- <a class="btn btn-primary" target="_blank" href="selectChat.ih">채팅하기</a> -->
 	                </p>
 	              </li>
@@ -173,7 +184,7 @@
 	            
 	            
 	            <!-- The Modal -->
-	            <div class="modal fade" id="mapModal">
+	            <!-- <div class="modal fade" id="mapModal">
 	              <div class="modal-dialog">
 	                <div class="modal-content">
 	                    <div id="map" style="width:100%;height:350px;"></div>
@@ -193,6 +204,7 @@
 	              
 	              map.relayout();
 	              </script>
+	               -->
 	            
 	          </div><!-- Content col end -->
 		  		
@@ -232,7 +244,7 @@
 		              <hr>
 		              <li>
 		                <p class="project-link">
-		                  <a class="btn btn-primary" target="_blank" href="#" id="entryButton">모임에 참가하기</a> 	<!-- join.me / 클릭시, 참가취소 로 변경되게끔! 인원수가 찬 경우, 대기하기로 출력하기 -->
+		                  <a class="btn btn-primary" href="#" id="entryButton">모임에 참가하기</a> 	<!-- join.me / 클릭시, 참가취소 로 변경되게끔! 인원수가 찬 경우, 대기하기로 출력하기 -->
 		                  <!-- <a class="btn btn-primary" target="_blank" href="selectChat.ih">채팅하기</a> -->
 		                </p>
 		              </li>

@@ -68,6 +68,26 @@ public class OnlineDao {
 		   return sqlSession.selectOne("offlineMapper.selectDetail", on);
 	   }
    }
+   
+   public int entryGroup(SqlSessionTemplate sqlSession, String memName, int memNo, int tableNo, int groupNo) {
+	   
+	   OnlineGroupOnce on = new OnlineGroupOnce();
+	   on.setName(memName);
+	   on.setMemNo(memNo);
+	   on.setTableNo(tableNo);
+	   on.setNo(groupNo);
+	   
+	   return sqlSession.insert("onlineMapper.entryGroup", on);
+   }
+   
+   public ArrayList<OnlineGroupOnce> selectEntryList(SqlSessionTemplate sqlSession, int tableNo, int groupNo) {
+	   
+	   OnlineGroupOnce on = new OnlineGroupOnce();
+	   on.setTableNo(tableNo);
+	   on.setNo(groupNo);
+	   
+	   return (ArrayList)sqlSession.selectList("onlineMapper.selectEntryList", on);
+   }
 
    public List<GroupUpload> selectAttachmentList(SqlSessionTemplate sqlSession, int tableNo, int no) {
 	   
