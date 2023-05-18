@@ -1,3 +1,4 @@
+<%@page import="java.net.URLEncoder"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
@@ -21,8 +22,8 @@
 		}
 	</style>
 
-<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=22931d135d75b509838f23be2834c5c7&libraries=services"></script>
-<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+	<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=22931d135d75b509838f23be2834c5c7&libraries=services"></script>
+	<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 
 </head>
 <body>
@@ -53,31 +54,153 @@
 
         <div class="row">
           <div class="col-lg-8">
-            <div id="page-slider" class="page-slider small-bg" style="background-color: rgb(241, 238, 237);">
-              <div class="item" style="height: 550px; position: relative;">
-                <img loading="lazy" style="max-width: 100%; max-height: 550px; position: absolute; top: 50%; left: 50%; transform : translate(-50%,-50%);" src="${pageContext.request.contextPath}/resources/images/offline/coffee1.jpg" alt="모임소개이미지" />
-              </div>
-
-              <div class="item" style="height: 550px; position: relative;">
-                <img loading="lazy" style="max-width: 100%; max-height: 550px; position: absolute; top: 50%; left: 50%; transform : translate(-50%,-50%);" src="${pageContext.request.contextPath}/resources/images/offline/coffee2.jpg" alt="모임소개이미지" />
-              </div>
-              
-              <div class="item" style="height: 550px; position: relative;">
-                <img loading="lazy" style="max-width: 100%; max-height: 550px; position: absolute; top: 50%; left: 50%; transform : translate(-50%,-50%);" src="${pageContext.request.contextPath}/resources/images/online/penguin.jpg" alt="모임소개이미지" />
-              </div>
-
-            <!--<div id="page-slider" class="page-slider small-bg">
+            <div id="page-slider" class="page-slider small-bg">
               <c:forEach var="gu" items="${ list }">
                 <div class="item">
                   <img loading="lazy" class="img-fluid" src="${ gu.filePath }" alt="모임소개이미지1" />
                 </div>
-              </c:forEach> -->
+              </c:forEach>
 
             </div><!-- Page slider end -->
+          </div><!-- Slider col end -->
+
+          <div class="col-lg-4 mt-5 mt-lg-0">
+
+            <h3 class="column-title mrt-0">${ ogo.title }</h3>
+            <p>${ ogo.content }</p>
+
+            <ul class="project-info list-unstyled">
+              <li>
+                <p class="project-info-label">카테고리</p>
+                <p class="project-info-content">${ ogo.categoryTitle }</p>
+              </li>
+              <li>
+                <p class="project-info-label">모임시각</p>
+                <p class="project-info-content">${ ogo.startDate }</p>
+              </li>
+              <li>
+                <p class="project-info-label">모임장소</p>
+                <p class="project-info-content">${ ogo.address } ${ ogo.addressDetail }&nbsp;&nbsp;&nbsp;<a href="#" class="btn btn-primary btn-xs" data-toggle="modal" data-target="#mapModal">지도보기</a>
+              </li>
+              <li>
+                <p class="project-info-label">그룹장</p>
+                <p class="project-info-content">${ ogo.name }</p>
+              </li>
+              <li>
+              	<hr>
+                <p class="project-info-label">정원</p>
+                <p class="project-info-content">최대 ${ ogo.max }명</p>
+              </li>
+              <li>
+                <p class="project-info-label">신청마감일</p>
+                <p class="project-info-content">${ ogo.endEnter }</p>	 <!-- 별도 설정없는 경우, 모임 시각으로 설정 -->
+              </li>
+              <li>
+                <p class="project-link">
+                  <br>
+                  <a class="btn btn-primary" target="_blank"  id="entryButton">참가하기</a>
+                </p>
+              </li>
+            </ul>
+
+            <!-- The Modal -->
+            <div class="modal fade" id="mapModal">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                    <div id="map" style="width:100%;height:350px;"></div>
+                </div>
+              </div>
+            </div>
+
+            <script>
+              var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
+                  mapOption = { 
+                      center: new kakao.maps.LatLng(33.450701, 126.570667), // 지도의 중심좌표
+                      level: 3 // 지도의 확대 레벨
+                  };
+              
+              // 지도를 표시할 div와  지도 옵션으로  지도를 생성합니다
+              var map = new kakao.maps.Map(mapContainer, mapOption); 
+              
+              map.relayout();
+              </script>
+
             
-            <!-- 여기는 참가버튼 누른 경우에만 보여야 함 -->
-            <div class="entry-list-me">
-            	<table border="1" align="center">
+            <script>
+            
+             
+            $(function() {
+                $("#entryButton").on("click", function() {
+                    var memNickname = "${loginUser.memNickname}";
+
+                    var memNo = "${ogo.memNo}";
+
+                    $.ajax({
+                        type: "post",
+                        data: { "memNo": memNo },
+                        url: "findNick.my",
+                        dataType: 'json',
+                        success: function(data) {
+                            var writer = data.memNickname; // memNickname을 받아와서 writer에 할당합니다.
+                            var tableNo = "${ogo.tableNo}";
+                            var groupNo = "${ogo.no}";
+                            var title = "${ogo.title}";
+                            var alertType = 1;
+                            var alertContent = memNickname + "님이 회원님의 " + title + " 소모임에 참여했습니다.";
+                            var AlarmData = {
+                                "alertContent": alertContent,
+                                "tableNo" : tableNo,
+                                "groupNo" : groupNo,
+                                "alertType" : alertType
+                            };
+                            
+
+                            console.log(AlarmData);
+                            $.ajax({
+                                type: "post",
+                                data: JSON.stringify(AlarmData),
+                                url: "saveAlert.my",
+                                contentType: "application/json; charset=utf-8",
+                                dataType: 'text',
+                                success: function(data) {
+                                    console.log(data);
+                                    if (socket) {
+                                        var socketMsg = "apply," + memNickname + "," + writer + "," + title;
+                                        console.log("msgmsg: " + socketMsg);
+                                        // $("#socketMessageDiv").text(socketMsg);
+                                        socket.send(socketMsg);
+                                        console.log('socketMsg 보냄');
+                                    }
+                                },
+                                error: function(err) {
+                                    console.log(err);
+                                }
+                            });
+                        },
+                        error: function(err) {
+                            console.log(err);
+                        }
+                    });
+                    });
+
+            });
+
+</script>
+
+          </div><!-- Content col end -->
+
+        </div><!-- Row end -->
+		
+		
+		
+		
+		
+		<!-- 여기부터는 참가버튼 누른 경우에만 보여야 함 -->
+		<hr>
+		
+		<div>
+			<table border="1" align="center">
+
 				<tbody>
 					<tr>
 						<th colspan="3">참가자 리스트</th>
@@ -102,6 +225,7 @@
 					</tr>
 				</tbody>
 			</table>
+
             </div>
             
           </div><!-- Slider col end -->
@@ -259,99 +383,13 @@
 		<hr>
         <iframe src="https://service.dongledongle.com/soboroo" frameborder="0" width="100%" height="500"></iframe>
 		
-		<!-- 
-		<table id="replyArea" class="table" align="center">
-	        <thead>
-	        	<c:choose>
-	        		<c:when test="${ empty loginUser }">
-	              <tr>
-	                  <th colspan="2">
-	                      <textarea class="form-control" cols="55" rows="2" style="resize:none; width:100%" readonly>로그인한 사용자만 이용가능한 서비스입니다. 로그인 후 이용바랍니다.</textarea>
-	                  </th>
-	                  <th style="vertical-align: middle"><button class="btn btn-secondary" disabled>등록하기</button></th>
-	              </tr>
-	            	</c:when>
-	            	<c:otherwise>
-	              <tr>
-	                  <th colspan="2">
-	                      <textarea class="form-control" name="" id="content" cols="55" rows="2" style="resize:none; width:100%"></textarea>
-	                  </th>
-	                  <th style="vertical-align: middle"><button class="btn btn-secondary" onclick="addReply();">등록하기</button></th>
-	              </tr>
-	            	</c:otherwise>
-	            </c:choose>
-	            <tr>
-	               <td colspan="3">댓글 (<span id="rcount">0</span>) </td> 
-	            </tr>
-	        </thead>
-	        <tbody>
-	        </tbody>
-         </table>
-         
-         <script>
-	    	$(function(){
-	    		selectReplyList(); // 화면이 랜더링 되자마자 댓글 조회를 하겠다
-	    	})
-	    	
-	    	function addReply(){ // 댓글작성용 ajax
-	    		if($("#content").val().trim().length != 0){ // 유효한 댓글 작성시 => insert ajax 요청 		// trim() 으로 공백을 제거함으로써 "       " 다음과 같이 불필요한 댓글 등록을 막는다.
-	    			
-	    			$.ajax({
-	    				url:"rinsert.bo",
-	    				data:{
-	    					refBoardNo:${ b.boardNo },													// 컨트롤러에서 Reply 객체 하나로 한번에 받기 위해서는 키값을 vo의 필드 이름으로 지정해준다.
-	    					replyContent:$("#content").val(),
-	    					replyWriter:'${ loginUser.userId }' // 문자열은 이렇게 묶어야함 					// 문자를 EL구문으로 가져오는 경우
-	    				}, success:function(status){
-	    					
-	    					if(status == "success"){
-	    						selectReplyList();
-	    						$("#content").val("");
-	    					}
-	    					
-	    					
-	    				}, error:function(){
-	    					console.log("댓글 작성용 ajax 통신 실패!");
-	    				}
-	    			});
-	    		
-	    		}else{
-	    			alertify.alert("댓글 작성 후 등록 요청해주세요!"); $("#content").val("");
-	    		}
-	    	}
-	    	
-	    	function selectReplyList(){ // 해당 게시글에 딸린 댓글리스트 조회용 ajax
-	    		$.ajax({
-	    			url:"rlist.bo",
-	    			data:{bno:${ b.boardNo }},
-	    			success:function(list){
-	    				console.log(list);
-	    				
-	    				let value = "";
-	    				
-	    				for(let i in list){
-	    					value += "<tr>"
-	    							+ "<th>" + list[i].replyWriter + "</th>"
-	    							+ "<td>" + list[i].replyContent + "</td>"
-	    							+ "<td>" + list[i].createDate + "</td>"
-	    							+ "</tr>";
-	    				}
-	    				
-	    				$("#replyArea tbody").html(value);
-	    				$("#rcount").text(list.length);
-	    				
-	    			}, error:function(){
-	    				console.log("댓글 리스트 조회용 ajax 통신 실패!");
-	    			}
-	    		});
-	    		
-	    	}
-	    	
-	     </script>
-          -->  
-            
 		
-
+		</div>
+		<!-- 버튼 여부에 따라 보이는 부분 끝 -->
+		
+		
+      	<hr>
+      	
       </div><!-- Conatiner end -->
     </section><!-- Main container end -->
 
