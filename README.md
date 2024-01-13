@@ -21,4 +21,4 @@ KH교육원 파이널 프로젝트
 
 ## 4. 설계 / 개발환경 / 각 섹션별 이미지
 
-별도의 첨부파일 '파이널_소보루_기능정리.pdf' 참조
+별도의 첨부파일 ['파이널_소보루_기능정리.pdf'](github.com/KIMSUJIN98/soboroo_KIMSUJIN98/blob/main/%ED%8C%8C%EC%9D%B4%EB%84%90_%EC%86%8C%EB%B3%B4%EB%A3%A8_%EA%B8%B0%EB%8A%A5%EC%A0%95%EB%A6%AC.pdf) 참조
